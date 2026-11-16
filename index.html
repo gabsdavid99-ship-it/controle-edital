@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edital</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: transparent;
+    padding: 12px;
+    color: #0f172a;
+  }
+
+  .widget {
+    width: 100%;
+    max-width: 1200px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  .resize-handle {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M14 2 L2 14 M14 7 L7 14 M14 12 L12 14' stroke='%23B888DA' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: 0.55;
+    transition: opacity 0.2s;
+    z-index: 10;
+    touch-action: none;
+  }
+  .resize-handle:hover { opacity: 1; }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: #B888DA;
+  }
+
+  .header-actions { display: flex; align-items: center; gap: 6px; }
+
+  .cycle-badge {
+    background: #f7f2fc;
+    color: #B888DA;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid #ebdff5;
+    white-space: nowrap;
+  }
+
+  .delete-cycle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 7px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .delete-cycle-btn:hover:not(:disabled) {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+  }
+  .delete-cycle-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .cycle-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+
+  .cycle-pill {
+    flex: 1 1 90px;
+    padding: 7px 6px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: grab;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .cycle-pill:hover { border-color: #d3b4e8; color: #B888DA; }
+  .cycle-pill:active { cursor: grabbing; }
+  .cycle-pill.active { background: #B888DA; color: #fff; border-color: #B888DA; }
+
+  .cycle-pill.dragging {
+    opacity: 0.35;
+    cursor: grabbing;
+  }
+  .cycle-pill.drag-over {
+    box-shadow: 0 0 0 2px #B888DA, 0 0 10px rgba(184, 136, 218, 0.45);
+    z-index: 1;
+  }
+
+  .cycle-pill.cycle-add {
+    flex: 0 0 auto;
+    padding: 7px 14px;
+    border-style: dashed;
+    border-color: #d3b4e8;
+    color: #B888DA;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cycle-pill.cycle-add:hover { background: #f7f2fc; }
+
+  .materias-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+
+  .materia-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .materia-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .s1 .dot { background: #818cf8; }
+  .s2 .dot { background: #34d399; }
+  .s3 .dot { background: #f472b6; }
+  .s4 .dot { background: #fbbf24; }
+  .s5 .dot { background: #60a5fa; }
+
+  .materia-info { flex: 1; min-width: 0; }
+
+  .materia-name-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 2px 5px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #0f172a;
+    font-family: inherit;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .materia-name-input:hover { background: #fff; border-color: #e2e8f0; }
+  .materia-name-input:focus { background: #fff; border-color: #c9a2e0; outline: none; }
+
+  .materia-time-row { display: flex; align-items: center; gap: 4px; margin-top: 1px; padding-left: 5px; }
+
+  .materia-time-input {
+    width: 52px;
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    color: #64748b;
+    font-family: inherit;
+    -moz-appearance: textfield;
+  }
+  .materia-time-input::-webkit-inner-spin-button,
+  .materia-time-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .materia-time-input:hover { background: #fff; border-color: #e2e8f0; }
+  .materia-time-input:focus { background: #fff; border-color: #c9a2e0; outline: none; }
+
+  .time-suffix { font-size: 0.74rem; color: #64748b; }
+
+  .assunto-count {
+    font-size: 0.74rem;
+    color: #64748b;
+    font-weight: 600;
+    padding: 2px 9px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .assunto-count.is-complete {
+    background: #d1fae5;
+    color: #047857;
+    border-color: #6ee7b7;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: background 0.2s, color 0.2s;
+    color: #94a3b8;
+    font-family: inherit;
+  }
+  .icon-btn:hover { background: #fee2e2; color: #ef4444; }
+
+  .list-toggle-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 14px;
+    background: #f7f2fc;
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    color: #B888DA;
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s ease;
+    margin: 0;
+    text-align: left;
+  }
+  .list-toggle-bar:hover { background: #efe4f8; }
+  .list-toggle-bar .bar-left { display: flex; align-items: center; gap: 6px; }
+  .list-toggle-bar .caret { display: inline-block; font-size: 0.7rem; transition: transform 0.25s ease; }
+  .list-toggle-bar.is-collapsed .caret { transform: rotate(-90deg); }
+  .list-toggle-bar .bar-hint {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #B888DA;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.85;
+  }
+
+  .assuntos-wrap { overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease; }
+  .assuntos-wrap.is-collapsed { max-height: 0 !important; opacity: 0; }
+
+  .assuntos-list { display: flex; flex-direction: column; gap: 6px; padding: 8px 14px 6px 14px; }
+
+  .assuntos-empty {
+    padding: 12px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+
+  .assunto-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #cbd5e1;
+    border-radius: 7px;
+    transition: border-color 0.2s ease;
+  }
+  .assunto-item.status-nao_iniciado { border-left-color: #cbd5e1; }
+  .assunto-item.status-em_andamento { border-left-color: #f59e0b; }
+  .assunto-item.status-em_revisao   { border-left-color: #a78bfa; }
+  .assunto-item.status-relembrar    { border-left-color: #22d3ee; }
+  .assunto-item.status-estudado     { border-left-color: #10b981; }
+  .assunto-item.status-estudado .assunto-text { text-decoration: line-through; color: #64748b; }
+
+  .status-select {
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 5px;
+    border-radius: 5px;
+    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
+    color: #475569;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .status-select:focus { outline: none; border-color: #c9a2e0; }
+  .status-select.status-nao_iniciado { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+  .status-select.status-em_andamento { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+  .status-select.status-em_revisao   { background: #ede9fe; color: #6d28d9; border-color: #c4b5fd; }
+  .status-select.status-relembrar    { background: #cffafe; color: #0e7490; border-color: #67e8f9; }
+  .status-select.status-estudado     { background: #d1fae5; color: #047857; border-color: #6ee7b7; }
+
+  .assunto-text {
+    flex: 1;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 0.88rem;
+    color: #0f172a;
+    padding: 2px 0;
+    min-width: 0;
+  }
+  .assunto-text:focus { outline: none; }
+  .assunto-text::placeholder { color: #94a3b8; }
+
+  .add-assunto-row {
+    display: flex;
+    gap: 6px;
+    padding: 8px 14px 10px 14px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+
+  .new-assunto-input {
+    flex: 1;
+    padding: 7px 10px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: #0f172a;
+  }
+  .new-assunto-input:focus { outline: none; border-color: #c9a2e0; }
+  .new-assunto-input::placeholder { color: #94a3b8; }
+
+  .add-assunto-btn {
+    padding: 6px 14px;
+    background: #B888DA;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    font-family: inherit;
+  }
+  .add-assunto-btn:hover { background: #9d6cc2; }
+
+  .empty-message {
+    text-align: center;
+    padding: 24px;
+    color: #94a3b8;
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .btn-add-materia {
+    width: 100%;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px dashed #d3b4e8;
+    border-radius: 10px;
+    color: #B888DA;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  .btn-add-materia:hover { background: #f7f2fc; border-color: #c9a2e0; }
+
+  .bottom-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+
+  .btn-secondary {
+    flex: 1;
+    min-width: 0;
+    padding: 9px;
+    background: #fff;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+  .progress-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #B888DA;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  .footer-info {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 8px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 9999;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay[hidden] { display: none !important; }
+
+  .modal-box {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 22px 18px 22px;
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .modal-box h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+  }
+
+  .modal-box p {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    white-space: pre-line;
+  }
+
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .modal-actions .btn-secondary,
+  .modal-actions .btn-danger {
+    flex: 0 0 auto;
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .modal-actions .btn-secondary {
+    background: #fff;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+  .modal-actions .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+  .btn-danger {
+    background: #ef4444;
+    color: #fff;
+    border: 1px solid #ef4444;
+  }
+  .btn-danger:hover { background: #dc2626; border-color: #dc2626; }
+
+  @media (max-width: 1280px) {
+    .widget { max-width: 100%; }
+  }
+  @media (max-width: 760px) {
+    body { padding: 8px; }
+    .widget { padding: 16px; }
+    .header h1 { font-size: 1.35rem; }
+    .materia-name-input { font-size: 0.9rem; }
+    .assunto-text { font-size: 0.82rem; }
+    .cycle-pill { font-size: 0.7rem; padding: 6px 4px; }
+    .status-select { font-size: 0.66rem; padding: 3px 3px; }
+    .delete-cycle-btn { width: 26px; height: 26px; font-size: 0.95rem; }
+    .resize-handle { bottom: 10px; right: 10px; width: 12px; height: 12px; }
+  }
+  @media (max-width: 520px) {
+    .bottom-actions { flex-direction: column; }
+    .btn-secondary { width: 100%; }
+  }
+  @media (max-width: 400px) {
+    .btn-secondary { font-size: 0.78rem; padding: 8px 6px; }
+    .assunto-count { font-size: 0.68rem; padding: 2px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="widget" id="widget">
+  <div class="header">
+    <h1>Edital</h1>
+    <div class="header-actions">
+      <div class="cycle-badge" id="cycleBadge">Matéria 1 / 11</div>
+      <button type="button" class="delete-cycle-btn" id="deleteCycleBtn" title="Excluir matéria atual" aria-label="Excluir matéria atual">×</button>
+    </div>
+  </div>
+
+  <div class="cycle-selector" id="cycleSelector"></div>
+
+  <div class="materias-list" id="materiasList"></div>
+
+  <button class="btn-add-materia" id="addMateriaBtn">+ Adicionar tópico</button>
+
+  <div class="bottom-actions">
+    <button class="btn-secondary" id="exportBtn">📤 Exportar config</button>
+    <button class="btn-secondary" id="resetBtn">↺ Restaurar padrão</button>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="footer-info" id="footerInfo">Adicione assuntos para começar</div>
+
+  <div class="resize-handle" id="resizeHandle" title="Arraste para redimensionar · Duplo clique para restaurar"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <h2 id="modalTitle">Confirmar</h2>
+    <p id="modalMessage"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="modalCancel">Cancelar</button>
+      <button type="button" class="btn-danger" id="modalConfirm">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'ciclo-estudos-materias-v1';
+const SIZE_KEY = 'edital-widget-size-v1';
+const STATUSES = ['nao_iniciado', 'em_andamento', 'em_revisao', 'relembrar', 'estudado'];
+
+/* PESOS DE PROGRESSO — 0%, 25%, 50%, 75%, 100% */
+const STATUS_WEIGHTS = {
+  nao_iniciado: 0,
+  em_andamento: 0.25,
+  em_revisao:   0.50,
+  relembrar:    0.75,
+  estudado:     1.00
+};
+
+/* =========================================================
+   CONFIG PADRÃO — EDITAL COMPLETO (11 matérias / 57 tópicos)
+   ========================================================= */
+const DEFAULT_CONFIG = {
+  cycles: [
+    /* ===== MATÉRIA 1 — LÍNGUA PORTUGUESA ===== */
+    { name: 'Português', subjects: [
+      { name: '1.1 Compreensão e interpretação de textos', time: 90, assuntos: [
+        { text: 'Ideia central, tema e tese', status: 'nao_iniciado' },
+        { text: 'Informações explícitas e implícitas', status: 'nao_iniciado' },
+        { text: 'Inferência, pressuposição e subentendido', status: 'nao_iniciado' },
+        { text: 'Finalidade, intenção e ponto de vista do autor', status: 'nao_iniciado' },
+        { text: 'Estrutura e organização textual', status: 'nao_iniciado' },
+        { text: 'Relações de causa, consequência, comparação, oposição e conclusão', status: 'nao_iniciado' },
+        { text: 'Vocabulário no contexto: denotação, conotação e ambiguidade', status: 'nao_iniciado' },
+        { text: 'Coerência e progressão textual', status: 'nao_iniciado' }
+      ]},
+      { name: '1.2 Tipos e gêneros textuais', time: 60, assuntos: [
+        { text: 'Tipos: narrativo, descritivo, dissertativo-argumentativo, expositivo e injuntivo', status: 'nao_iniciado' },
+        { text: 'Gêneros: notícia, reportagem, editorial, artigo de opinião, crônica, conto, charge, tirinha, anúncio, e-mail, ofício, ata, requerimento, edital', status: 'nao_iniciado' },
+        { text: 'Função social, estrutura e linguagem dos gêneros', status: 'nao_iniciado' },
+        { text: 'Diferença entre tipo textual e gênero textual', status: 'nao_iniciado' }
+      ]},
+      { name: '1.3 Ortografia', time: 60, assuntos: [
+        { text: 'Acentuação gráfica', status: 'nao_iniciado' },
+        { text: 'Uso do hífen', status: 'nao_iniciado' },
+        { text: 'Emprego de letras: s/z, x/ch, g/j, c/ç', status: 'nao_iniciado' },
+        { text: 'Homófonos, homógrafos e parônimos', status: 'nao_iniciado' },
+        { text: 'Maiúsculas e minúsculas', status: 'nao_iniciado' },
+        { text: 'Grafia de palavras e expressões frequentes', status: 'nao_iniciado' }
+      ]},
+      { name: '1.4 Coesão e tempos verbais', time: 120, assuntos: [
+        { text: 'Coesão referencial e sequencial', status: 'nao_iniciado' },
+        { text: 'Anáfora e catáfora', status: 'nao_iniciado' },
+        { text: 'Pronomes pessoais, possessivos, demonstrativos, relativos e indefinidos', status: 'nao_iniciado' },
+        { text: 'Sinônimos, antônimos, hiperônimos e hipônimos', status: 'nao_iniciado' },
+        { text: 'Elipse e repetição lexical/pronominal', status: 'nao_iniciado' },
+        { text: 'Conectores: adição, oposição, causa, consequência, conclusão, explicação, exemplificação, condição, concessão, finalidade, tempo e comparação', status: 'nao_iniciado' },
+        { text: 'Sequenciação cronológica, lógica e argumentativa', status: 'nao_iniciado' },
+        { text: 'Tempos verbais: presente, pretéritos e futuros', status: 'nao_iniciado' },
+        { text: 'Indicativo, subjuntivo e imperativo', status: 'nao_iniciado' },
+        { text: 'Correlação entre tempos e modos verbais', status: 'nao_iniciado' },
+        { text: 'Valores semânticos dos tempos verbais', status: 'nao_iniciado' },
+        { text: 'Locuções verbais', status: 'nao_iniciado' },
+        { text: 'Infinitivo, gerúndio e particípio', status: 'nao_iniciado' }
+      ]},
+      { name: '1.5 Morfossintaxe', time: 180, assuntos: [
+        { text: 'Classes de palavras: substantivo, artigo, adjetivo, numeral, pronome, verbo, advérbio, preposição, conjunção e interjeição', status: 'nao_iniciado' },
+        { text: 'Classificação e flexão', status: 'nao_iniciado' },
+        { text: 'Pronomes: pessoais, de tratamento, demonstrativos, relativos, indefinidos, possessivos e interrogativos', status: 'nao_iniciado' },
+        { text: 'Conjunções coordenativas e subordinativas', status: 'nao_iniciado' },
+        { text: 'Verbos: conjugação, tempos, modos e formas nominais', status: 'nao_iniciado' },
+        { text: 'Coordenação: assindéticas e sindéticas (aditivas, adversativas, alternativas, conclusivas, explicativas)', status: 'nao_iniciado' },
+        { text: 'Pontuação em estruturas coordenadas', status: 'nao_iniciado' },
+        { text: 'Subordinadas substantivas: subjetiva, objetiva direta, objetiva indireta, completiva nominal, predicativa e apositiva', status: 'nao_iniciado' },
+        { text: 'Subordinadas adjetivas: restritivas e explicativas', status: 'nao_iniciado' },
+        { text: 'Subordinadas adverbiais: causal, consecutiva, condicional, concessiva, comparativa, conformativa, final, temporal e proporcional', status: 'nao_iniciado' },
+        { text: 'Orações reduzidas', status: 'nao_iniciado' },
+        { text: 'Termos subordinados: complementos, adjuntos, aposto e predicativo', status: 'nao_iniciado' },
+        { text: 'Vírgula: casos obrigatórios, facultativos e proibidos', status: 'nao_iniciado' },
+        { text: 'Ponto e vírgula, ponto final e dois-pontos', status: 'nao_iniciado' },
+        { text: 'Travessão, parênteses, aspas, reticências, interrogação e exclamação', status: 'nao_iniciado' },
+        { text: 'Concordância verbal: regra geral, sujeito composto, posposto e oculto', status: 'nao_iniciado' },
+        { text: 'Concordância com "se"; verbos impessoais; haver e existir; concordância com "ser"', status: 'nao_iniciado' },
+        { text: 'Expressões partitivas, porcentagem, pronomes indefinidos e "um dos que"', status: 'nao_iniciado' },
+        { text: 'Concordância nominal e casos especiais', status: 'nao_iniciado' },
+        { text: 'Regência verbal: verbos transitivos diretos, indiretos e com preposição obrigatória', status: 'nao_iniciado' },
+        { text: 'Regência de: assistir, aspirar, visar, implicar, preferir, obedecer, lembrar, esquecer', status: 'nao_iniciado' },
+        { text: 'Regência nominal; pronomes relativos com preposição; regência e crase', status: 'nao_iniciado' },
+        { text: 'Crase: regra geral (a + a), casos obrigatórios, facultativos e proibidos', status: 'nao_iniciado' },
+        { text: 'Crase antes de pronomes, nomes próprios, lugares e horas; àquela, à qual, à que; paralelismo', status: 'nao_iniciado' },
+        { text: 'Colocação dos pronomes átonos: próclise, mesóclise e ênclise', status: 'nao_iniciado' },
+        { text: 'Palavras atrativas de próclise; colocação em locuções verbais; casos facultativos e proibidos', status: 'nao_iniciado' }
+      ]},
+      { name: '1.6 Reescrita de frases e parágrafos', time: 60, assuntos: [
+        { text: 'Significação das palavras', status: 'nao_iniciado' },
+        { text: 'Substituição de palavras ou trechos', status: 'nao_iniciado' },
+        { text: 'Reorganização de orações e períodos', status: 'nao_iniciado' },
+        { text: 'Reescrita de textos de diferentes gêneros e níveis de formalidade', status: 'nao_iniciado' },
+        { text: 'Manutenção do sentido, da coerência e da correção', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 2 — LÍNGUA INGLESA ===== */
+    { name: 'Inglês', subjects: [
+      { name: '2. Língua Inglesa', time: 120, assuntos: [
+        { text: 'Compreensão de textos variados', status: 'nao_iniciado' },
+        { text: 'Vocabulário e estrutura da língua', status: 'nao_iniciado' },
+        { text: 'Ideias principais e secundárias', status: 'nao_iniciado' },
+        { text: 'Informações explícitas e implícitas', status: 'nao_iniciado' },
+        { text: 'Relações intratextuais e intertextuais', status: 'nao_iniciado' },
+        { text: 'Itens gramaticais relevantes para a compreensão semântica', status: 'nao_iniciado' },
+        { text: 'Formas contemporâneas da linguagem inglesa', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 3 — DIREITO ADMINISTRATIVO ===== */
+    { name: 'D. Administrativo', subjects: [
+      { name: '3.1 Estado, governo e Adm. Pública', time: 90, assuntos: [
+        { text: 'Conceito, elementos, poderes e organização do Estado', status: 'nao_iniciado' },
+        { text: 'Princípios constitucionais e doutrinários', status: 'nao_iniciado' },
+        { text: 'Administração direta e indireta', status: 'nao_iniciado' },
+        { text: 'Centralização, descentralização, concentração e desconcentração', status: 'nao_iniciado' }
+      ]},
+      { name: '3.2 Ato administrativo', time: 60, assuntos: [
+        { text: 'Conceito, requisitos, atributos, classificação e espécies', status: 'nao_iniciado' },
+        { text: 'Extinção, nulidades e revogação', status: 'nao_iniciado' },
+        { text: 'Parecer: responsabilidade do emissor', status: 'nao_iniciado' }
+      ]},
+      { name: '3.3 Agentes públicos', time: 90, assuntos: [
+        { text: 'Disposições constitucionais aplicáveis', status: 'nao_iniciado' },
+        { text: 'Cargo, emprego e função pública', status: 'nao_iniciado' },
+        { text: 'Requisição', status: 'nao_iniciado' },
+        { text: 'Regime jurídico dos servidores federais — Lei 8.112/1990 e alterações', status: 'nao_iniciado' }
+      ]},
+      { name: '3.4 Direito administrativo disciplinar', time: 90, assuntos: [
+        { text: 'Fontes e princípios', status: 'nao_iniciado' },
+        { text: 'Ilícito administrativo disciplinar', status: 'nao_iniciado' },
+        { text: 'Procedimentos disciplinares', status: 'nao_iniciado' },
+        { text: 'Processo Administrativo Federal — Lei 9.784/1999 e alterações', status: 'nao_iniciado' }
+      ]},
+      { name: '3.5 Poderes administrativos', time: 60, assuntos: [
+        { text: 'Discricionário, hierárquico, disciplinar, regulamentar e de polícia', status: 'nao_iniciado' },
+        { text: 'Uso e abuso do poder', status: 'nao_iniciado' }
+      ]},
+      { name: '3.6 Responsabilidade civil do Estado', time: 60, assuntos: [
+        { text: 'Responsabilidade civil no direito brasileiro', status: 'nao_iniciado' },
+        { text: 'Responsabilidade por ato comissivo', status: 'nao_iniciado' },
+        { text: 'Responsabilidade por omissão', status: 'nao_iniciado' },
+        { text: 'Requisitos para demonstração', status: 'nao_iniciado' },
+        { text: 'Causas excludentes e atenuantes', status: 'nao_iniciado' }
+      ]},
+      { name: '3.7 Improbidade Administrativa', time: 60, assuntos: [
+        { text: 'Lei 8.429/1992 e alterações', status: 'nao_iniciado' }
+      ]},
+      { name: '3.8 Licitações e Contratos', time: 120, assuntos: [
+        { text: 'Lei 14.133/2021 e alterações', status: 'nao_iniciado' },
+        { text: 'Conceito, princípios e finalidade da licitação', status: 'nao_iniciado' },
+        { text: 'Modalidades, dispensa e inexigibilidade', status: 'nao_iniciado' },
+        { text: 'Contratos administrativos e características', status: 'nao_iniciado' },
+        { text: 'Formalização, gestão e fiscalização', status: 'nao_iniciado' },
+        { text: 'Planejamento e fiscalização contratual', status: 'nao_iniciado' },
+        { text: 'Papel do fiscalizador', status: 'nao_iniciado' },
+        { text: 'Estudo Técnico Preliminar e Termo de Referência', status: 'nao_iniciado' }
+      ]},
+      { name: '3.9 Lei de Acesso à Informação', time: 60, assuntos: [
+        { text: 'Lei 12.527/2011 e alterações', status: 'nao_iniciado' }
+      ]},
+      { name: '3.10 LGPD', time: 60, assuntos: [
+        { text: 'Lei 13.709/2018 e alterações', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 4 — ADMINISTRAÇÃO PÚBLICA ===== */
+    { name: 'Adm. Pública', subjects: [
+      { name: '4.1 Evolução dos modelos de gestão', time: 90, assuntos: [
+        { text: 'Patrimonialismo', status: 'nao_iniciado' },
+        { text: 'Administração burocrática', status: 'nao_iniciado' },
+        { text: 'Nova Gestão Pública — New Public Management', status: 'nao_iniciado' },
+        { text: 'Nova Governança Pública — New Public Governance: conceito, fundamentos e evolução', status: 'nao_iniciado' }
+      ]},
+      { name: '4.2 Ação pública em redes', time: 90, assuntos: [
+        { text: 'Redes de cooperação', status: 'nao_iniciado' },
+        { text: 'Articulação interinstitucional', status: 'nao_iniciado' },
+        { text: 'Parcerias com setor privado e terceiro setor', status: 'nao_iniciado' },
+        { text: 'Coprodução do bem público', status: 'nao_iniciado' },
+        { text: 'Participação cidadã e transparência ativa', status: 'nao_iniciado' },
+        { text: 'Valor público e cadeia de valor público', status: 'nao_iniciado' }
+      ]},
+      { name: '4.3 Governança na Adm. Pública', time: 90, assuntos: [
+        { text: 'Conceito de governança pública', status: 'nao_iniciado' },
+        { text: 'Distinção entre governança e governabilidade', status: 'nao_iniciado' },
+        { text: 'Alinhamento estratégico', status: 'nao_iniciado' },
+        { text: 'Mecanismos: liderança, estratégia e controle', status: 'nao_iniciado' },
+        { text: 'Valor público: geração de valor, resultados, sustentabilidade e avaliação de impactos', status: 'nao_iniciado' },
+        { text: 'Decreto Federal 9.203/2017 e alterações', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 5 — DIREITO CONSTITUCIONAL ===== */
+    { name: 'D. Constitucional', subjects: [
+      { name: '5.1 CF/88 — conceito e estrutura', time: 60, assuntos: [
+        { text: 'Conceito, contexto histórico, características e estrutura', status: 'nao_iniciado' },
+        { text: 'Princípios fundamentais', status: 'nao_iniciado' }
+      ]},
+      { name: '5.2 Direitos e garantias fundamentais', time: 120, assuntos: [
+        { text: 'Direitos e deveres individuais e coletivos', status: 'nao_iniciado' },
+        { text: 'Direitos sociais', status: 'nao_iniciado' },
+        { text: 'Nacionalidade', status: 'nao_iniciado' },
+        { text: 'Direitos políticos', status: 'nao_iniciado' },
+        { text: 'Partidos políticos', status: 'nao_iniciado' }
+      ]},
+      { name: '5.3 Organização do Estado', time: 90, assuntos: [
+        { text: 'Organização político-administrativa', status: 'nao_iniciado' },
+        { text: 'União, estados, municípios, Distrito Federal e territórios', status: 'nao_iniciado' },
+        { text: 'Intervenção federal', status: 'nao_iniciado' }
+      ]},
+      { name: '5.4 Administração pública (CF)', time: 60, assuntos: [
+        { text: 'Disposições gerais', status: 'nao_iniciado' },
+        { text: 'Servidores públicos civis e militares', status: 'nao_iniciado' }
+      ]},
+      { name: '5.5 Poder Legislativo', time: 90, assuntos: [
+        { text: 'Congresso Nacional e suas Casas', status: 'nao_iniciado' },
+        { text: 'Atribuições, competências, reuniões e comissões', status: 'nao_iniciado' }
+      ]},
+      { name: '5.6 Regime jurídico dos parlamentares', time: 60, assuntos: [
+        { text: 'Imunidades, prerrogativas e deveres', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 6 — REGIMENTOS ===== */
+    { name: 'Regimentos', subjects: [
+      { name: '6.1 Regimento Interno da Câmara', time: 180, assuntos: [
+        { text: 'Disposições preliminares e órgãos da Câmara — arts. 1º a 24', status: 'nao_iniciado' },
+        { text: 'Sessões da Câmara — arts. 65 a 94', status: 'nao_iniciado' },
+        { text: 'Deputados — arts. 226 a 251', status: 'nao_iniciado' },
+        { text: 'Administração e economia interna — arts. 262 a 273', status: 'nao_iniciado' },
+        { text: 'Resolução nº 17/1989 — arts. 25 a 64', status: 'nao_iniciado' },
+        { text: 'Resolução nº 17/1989 — arts. 95 a 200', status: 'nao_iniciado' }
+      ]},
+      { name: '6.2 Regimento Comum do Congresso', time: 90, assuntos: [
+        { text: 'Título I', status: 'nao_iniciado' },
+        { text: 'Título IV, Capítulo II e Capítulo III — até art. 103', status: 'nao_iniciado' },
+        { text: 'Resolução nº 1/1970-CN — arts. 1º a 71', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 7 — TI E DADOS ===== */
+    { name: 'TI e Dados', subjects: [
+      { name: '7.1 MSOffice 365', time: 90, assuntos: [
+        { text: 'Word', status: 'nao_iniciado' },
+        { text: 'Excel', status: 'nao_iniciado' },
+        { text: 'PowerPoint', status: 'nao_iniciado' },
+        { text: 'OneDrive', status: 'nao_iniciado' }
+      ]},
+      { name: '7.2 Redes de computadores', time: 60, assuntos: [
+        { text: 'Conceitos básicos', status: 'nao_iniciado' },
+        { text: 'Ferramentas, aplicativos e procedimentos de Internet e intranet', status: 'nao_iniciado' }
+      ]},
+      { name: '7.3 Ferramentas de comunicação', time: 60, assuntos: [
+        { text: 'Correio eletrônico: webmail e cliente de e-mail', status: 'nao_iniciado' },
+        { text: 'Microsoft Teams', status: 'nao_iniciado' },
+        { text: 'Google Meet', status: 'nao_iniciado' }
+      ]},
+      { name: '7.4 Segurança e governança digital', time: 90, assuntos: [
+        { text: 'Segurança da informação', status: 'nao_iniciado' },
+        { text: 'Backup', status: 'nao_iniciado' },
+        { text: 'Vírus, worms e pragas virtuais', status: 'nao_iniciado' },
+        { text: 'Antivírus, firewall e antispyware', status: 'nao_iniciado' },
+        { text: 'Phishing e pharming', status: 'nao_iniciado' }
+      ]},
+      { name: '7.5 Inteligência artificial', time: 90, assuntos: [
+        { text: 'Conceitos básicos', status: 'nao_iniciado' },
+        { text: 'Engenharia de prompts', status: 'nao_iniciado' },
+        { text: 'Aprendizado supervisionado, não supervisionado e por reforço', status: 'nao_iniciado' },
+        { text: 'IA generativa: conceitos, exemplos e casos de uso', status: 'nao_iniciado' }
+      ]},
+      { name: '7.6 Ética e responsabilidade digital', time: 60, assuntos: [] },
+      { name: '7.7 Dados', time: 60, assuntos: [
+        { text: 'Conceitos, atributos e métricas', status: 'nao_iniciado' },
+        { text: 'Transformação de dados', status: 'nao_iniciado' }
+      ]},
+      { name: '7.8 Visualização de dados', time: 90, assuntos: [
+        { text: 'Princípios de visualização', status: 'nao_iniciado' },
+        { text: 'Tipos de gráficos: histograma, linha, barra, dispersão e box plot', status: 'nao_iniciado' },
+        { text: 'Ferramentas: Power BI, Tableau e Data Studio', status: 'nao_iniciado' },
+        { text: 'Storytelling para visualização de dados', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 8 — LINGUÍSTICA ===== */
+    { name: 'Linguística', subjects: [
+      { name: '8.1 Teoria do signo linguístico', time: 90, assuntos: [
+        { text: 'Linguagem, língua e fala', status: 'nao_iniciado' },
+        { text: 'Significante e significado; significação', status: 'nao_iniciado' },
+        { text: 'Arbitrariedade e motivação; linearidade', status: 'nao_iniciado' },
+        { text: 'Referente, referência, representação e sentido', status: 'nao_iniciado' },
+        { text: 'Denotação e conotação', status: 'nao_iniciado' }
+      ]},
+      { name: '8.2 Categorias semânticas', time: 60, assuntos: [
+        { text: 'Gênero, número, pessoa, tempo, modo, aspecto e papéis semânticos', status: 'nao_iniciado' }
+      ]},
+      { name: '8.3 Leitura', time: 120, assuntos: [
+        { text: 'Compreensão literal, coesão e coerência', status: 'nao_iniciado' },
+        { text: 'Ideia principal e detalhes de apoio', status: 'nao_iniciado' },
+        { text: 'Comparação, causa e efeito, contraste', status: 'nao_iniciado' },
+        { text: 'Relações coesivas: referência, substituição, elipse e repetição', status: 'nao_iniciado' },
+        { text: 'Grupos vocálicos, estrutura e formação de palavras', status: 'nao_iniciado' },
+        { text: 'Homônimos, parônimos e cognatos', status: 'nao_iniciado' },
+        { text: 'Sinonímia, antonímia, hiperonímia, hiponímia e campo semântico', status: 'nao_iniciado' },
+        { text: 'Propósito do autor, informações implícitas e distinção fato/opinião', status: 'nao_iniciado' },
+        { text: 'Compreensão crítica e seleção de inferência', status: 'nao_iniciado' },
+        { text: 'Organização retórica: generalização, exemplificação, descrição, definição e especificação', status: 'nao_iniciado' }
+      ]},
+      { name: '8.4 Recursos de produção de textos', time: 60, assuntos: [
+        { text: 'Recursos estilísticos e estruturais em tipos e gêneros variados', status: 'nao_iniciado' },
+        { text: 'Adequação da linguagem ao gênero e às convenções da escrita', status: 'nao_iniciado' }
+      ]},
+      { name: '8.5 Teoria da Enunciação e AD', time: 90, assuntos: [
+        { text: 'Situação de comunicação; enunciação e enunciado', status: 'nao_iniciado' },
+        { text: 'Teoria da enunciação na produção do texto escrito', status: 'nao_iniciado' },
+        { text: 'Texto e discurso', status: 'nao_iniciado' },
+        { text: 'Dialogismo e polifonia', status: 'nao_iniciado' },
+        { text: 'Esferas sociais de comunicação', status: 'nao_iniciado' },
+        { text: 'Retórica e oratória parlamentar', status: 'nao_iniciado' }
+      ]},
+      { name: '8.6 Gêneros Discursivos', time: 90, assuntos: [
+        { text: 'Gêneros do discurso e tipos textuais', status: 'nao_iniciado' },
+        { text: 'Macro e microestrutura', status: 'nao_iniciado' },
+        { text: 'Construção composicional, conteúdo temático e estilo', status: 'nao_iniciado' },
+        { text: 'Intertextualidade', status: 'nao_iniciado' },
+        { text: 'Retextualização, reescritura e paráfrase', status: 'nao_iniciado' }
+      ]},
+      { name: '8.7 Variação linguística', time: 60, assuntos: [
+        { text: 'Tipos de variação; dialetos e registros', status: 'nao_iniciado' },
+        { text: 'Oralidade e escrita', status: 'nao_iniciado' },
+        { text: 'Formalidade e informalidade', status: 'nao_iniciado' },
+        { text: 'Normas linguísticas', status: 'nao_iniciado' },
+        { text: 'Variação no português do Brasil', status: 'nao_iniciado' },
+        { text: 'Variação e construção do texto escrito', status: 'nao_iniciado' }
+      ]},
+      { name: '8.8 Língua e gramática', time: 60, assuntos: [
+        { text: 'Concepções de gramática', status: 'nao_iniciado' },
+        { text: 'Tipos de gramática', status: 'nao_iniciado' },
+        { text: 'Correção e incorreção', status: 'nao_iniciado' },
+        { text: 'Propriedade e impropriedade', status: 'nao_iniciado' }
+      ]},
+      { name: '8.9 Funções da linguagem', time: 60, assuntos: [] },
+      { name: '8.10 Retórica e figuras de linguagem', time: 60, assuntos: [] },
+      { name: '8.11 Comunicações oficiais', time: 90, assuntos: [
+        { text: 'Introduções e fechos apropriados', status: 'nao_iniciado' },
+        { text: 'Pronomes de tratamento', status: 'nao_iniciado' },
+        { text: 'Reduções ortográficas', status: 'nao_iniciado' },
+        { text: 'Conceitos e estrutura de documentos oficiais', status: 'nao_iniciado' }
+      ]},
+      { name: '8.12 Noções básicas de lógica', time: 60, assuntos: [
+        { text: 'Conectivos', status: 'nao_iniciado' },
+        { text: 'Argumentos', status: 'nao_iniciado' },
+        { text: 'Notação', status: 'nao_iniciado' }
+      ]},
+      { name: '8.13 Técnica Legislativa', time: 90, assuntos: [
+        { text: 'Lei Complementar Federal nº 95/1998 e alterações', status: 'nao_iniciado' },
+        { text: 'Elaboração, redação, alteração e consolidação das leis', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 9 — FALA E IA ===== */
+    { name: 'Fala e IA', subjects: [
+      { name: '9.1 Reconhecimento de Fala', time: 120, assuntos: [
+        { text: 'ASR — Automatic Speech Recognition', status: 'nao_iniciado' },
+        { text: 'Modelos de fala end-to-end', status: 'nao_iniciado' },
+        { text: 'LLMs multimodais de áudio nativo', status: 'nao_iniciado' },
+        { text: 'Diarização de falantes', status: 'nao_iniciado' },
+        { text: 'Pontuação automática e capitalização', status: 'nao_iniciado' },
+        { text: 'Desafios do ASR em Português Brasileiro: sotaques, vocabulário técnico e parlamentar', status: 'nao_iniciado' },
+        { text: 'Transcrição em tempo real', status: 'nao_iniciado' },
+        { text: 'Ferramentas e APIs: Whisper, Google Speech-to-text, Azure Speech e AWS Transcribe', status: 'nao_iniciado' }
+      ]},
+      { name: '9.2 Degravação e Pós-processamento', time: 90, assuntos: [
+        { text: 'Transcrição automática, degravação e revisão humana', status: 'nao_iniciado' },
+        { text: 'Fluxo Human in the loop', status: 'nao_iniciado' },
+        { text: 'Revisão e edição: qualidade e fidelidade', status: 'nao_iniciado' },
+        { text: 'Formatação de transcrições parlamentares', status: 'nao_iniciado' },
+        { text: 'Normalização de texto: números, siglas, abreviações e termos técnicos', status: 'nao_iniciado' },
+        { text: 'Ferramentas de CAT e editores de transcrição', status: 'nao_iniciado' },
+        { text: 'Controle de qualidade: revisão em dupla, auditorias e SLA', status: 'nao_iniciado' },
+        { text: 'Vocabulário técnico parlamentar e adaptação de modelo de linguagem', status: 'nao_iniciado' }
+      ]},
+      { name: '9.3 IA aplicada ao contexto parlamentar', time: 90, assuntos: [
+        { text: 'Transcrição de sessões, sumarização, indexação e busca', status: 'nao_iniciado' },
+        { text: 'Busca semântica em acervos parlamentares', status: 'nao_iniciado' },
+        { text: 'Geração automática de atas e resumos', status: 'nao_iniciado' },
+        { text: 'Modelos multilíngues e especializados em português', status: 'nao_iniciado' }
+      ]},
+      { name: '9.4 Proteção e segurança da informação', time: 60, assuntos: [
+        { text: 'LGPD em transcrição e IA', status: 'nao_iniciado' },
+        { text: 'Direitos autorais e ética no uso de IA', status: 'nao_iniciado' },
+        { text: 'Segurança em pipelines de áudio e transcrição', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 10 — PROCESSO LEGISLATIVO ===== */
+    { name: 'Proc. Legislativo', subjects: [
+      { name: '10.1 Procedimento Legislativo', time: 90, assuntos: [
+        { text: 'Tipos: ordinário, abreviado, sumário, sumaríssimo, especial e concentrado', status: 'nao_iniciado' },
+        { text: 'Etapas e noções básicas', status: 'nao_iniciado' },
+        { text: 'Comissões, pareceres, deliberação, votação, sanção e veto', status: 'nao_iniciado' }
+      ]},
+      { name: '10.2 Matérias legislativas', time: 90, assuntos: [
+        { text: 'Projeto de lei ordinária, complementar e delegada', status: 'nao_iniciado' },
+        { text: 'Medida provisória', status: 'nao_iniciado' },
+        { text: 'Projeto de decreto legislativo', status: 'nao_iniciado' },
+        { text: 'Projeto de resolução', status: 'nao_iniciado' },
+        { text: 'Proposta de Emenda à Constituição — PEC', status: 'nao_iniciado' }
+      ]},
+      { name: '10.3 Atos e iniciativas', time: 60, assuntos: [
+        { text: 'Indicações, pareceres, requerimentos e vetos', status: 'nao_iniciado' },
+        { text: 'Iniciativa legislativa: Presidência da República, Congresso Nacional, tribunais e cidadãos', status: 'nao_iniciado' }
+      ]}
+    ]},
+
+    /* ===== MATÉRIA 11 — CIÊNCIA POLÍTICA ===== */
+    { name: 'C. Política', subjects: [
+      { name: '11. Ciência Política', time: 180, assuntos: [
+        { text: 'Regimes políticos', status: 'nao_iniciado' },
+        { text: 'Sistemas e formas de governo', status: 'nao_iniciado' },
+        { text: 'Representação política', status: 'nao_iniciado' },
+        { text: 'Poderes e relações entre Executivo, Legislativo e Judiciário', status: 'nao_iniciado' },
+        { text: 'Sistemas eleitorais', status: 'nao_iniciado' },
+        { text: 'Teoria dos partidos políticos', status: 'nao_iniciado' },
+        { text: 'Organização política brasileira', status: 'nao_iniciado' },
+        { text: 'Temas relevantes de política internacional e brasileira contemporânea', status: 'nao_iniciado' },
+        { text: 'Teoria do Estado e formação dos Estados nacionais', status: 'nao_iniciado' },
+        { text: 'Formação do Estado brasileiro', status: 'nao_iniciado' },
+        { text: 'História do voto e dos partidos no Brasil', status: 'nao_iniciado' }
+      ]}
+    ]}
+  ]
+};
+
+let state = null;
+let activeCycle = 0;
+const collapsedLists = {};
+
+/* ===== DRAG-AND-DROP STATE ===== */
+let dragSrcIdx = null;
+let touchState = null;
+let suppressClickFlag = false;
+
+function suppressNextClick() {
+  suppressClickFlag = true;
+  setTimeout(() => { suppressClickFlag = false; }, 150);
+}
+
+const widget         = document.getElementById('widget');
+const resizeHandle   = document.getElementById('resizeHandle');
+const cycleBadge     = document.getElementById('cycleBadge');
+const selectorEl     = document.getElementById('cycleSelector');
+const listEl         = document.getElementById('materiasList');
+const addMateriaBtn  = document.getElementById('addMateriaBtn');
+const exportBtn      = document.getElementById('exportBtn');
+const resetBtn       = document.getElementById('resetBtn');
+const deleteCycleBtn = document.getElementById('deleteCycleBtn');
+const progress       = document.getElementById('progressFill');
+const footerInfo     = document.getElementById('footerInfo');
+
+const modalOverlay  = document.getElementById('modalOverlay');
+const modalTitle    = document.getElementById('modalTitle');
+const modalMessage  = document.getElementById('modalMessage');
+const modalCancel   = document.getElementById('modalCancel');
+const modalConfirm  = document.getElementById('modalConfirm');
+
+let confirmCallback = null;
+
+function openConfirm(title, message, confirmLabel, onConfirm) {
+  modalTitle.textContent = title;
+  modalMessage.textContent = message;
+  modalConfirm.textContent = confirmLabel || 'Excluir';
+  confirmCallback = onConfirm;
+  modalOverlay.hidden = false;
+  setTimeout(() => modalCancel.focus(), 30);
+}
+
+function closeConfirm() {
+  modalOverlay.hidden = true;
+  confirmCallback = null;
+}
+
+modalCancel.addEventListener('click', closeConfirm);
+
+modalConfirm.addEventListener('click', () => {
+  const cb = confirmCallback;
+  closeConfirm();
+  if (typeof cb === 'function') cb();
+});
+
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeConfirm();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !modalOverlay.hidden) closeConfirm();
+});
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (!p || !Array.isArray(p.cycles)) return null;
+    for (const c of p.cycles) {
+      if (!Array.isArray(c.subjects)) return null;
+      for (const s of c.subjects) {
+        if (!Array.isArray(s.assuntos)) s.assuntos = [];
+        s.assuntos = s.assuntos.map(a => {
+          let status = a.status;
+          if (STATUSES.indexOf(status) === -1) {
+            status = a.done ? 'estudado' : 'nao_iniciado';
+          }
+          return { text: a.text || '', status };
+        });
+      }
+    }
+    return p;
+  } catch { return null; }
+}
+
+function ensureCollapsedSet() {
+  if (!collapsedLists[activeCycle]) collapsedLists[activeCycle] = new Set();
+  return collapsedLists[activeCycle];
+}
+
+function clearCollapsed() {
+  Object.keys(collapsedLists).forEach(k => delete collapsedLists[k]);
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function loadSize() {
+  try {
+    const raw = localStorage.getItem(SIZE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveSize() {
+  const s = {
+    l: parseFloat(widget.style.left)   || null,
+    t: parseFloat(widget.style.top)    || null,
+    w: parseFloat(widget.style.width)  || null,
+    h: parseFloat(widget.style.height) || null
+  };
+  try { localStorage.setItem(SIZE_KEY, JSON.stringify(s)); } catch {}
+}
+
+function applySize(size) {
+  if (!size) return;
+  const maxW = window.innerWidth - 24;
+  const maxH = window.innerHeight - 24;
+  const w = Math.max(360, Math.min(size.w || 1200, maxW));
+  const h = Math.max(260, Math.min(size.h || Math.min(window.innerHeight - 24, 600), maxH));
+  const l = Math.max(12, Math.min(size.l != null ? size.l : (window.innerWidth - w) / 2, window.innerWidth - w - 12));
+  const t = Math.max(12, Math.min(size.t != null ? size.t : (window.innerHeight - h) / 2, window.innerHeight - h - 12));
+  widget.style.position = 'fixed';
+  widget.style.left = l + 'px';
+  widget.style.top = t + 'px';
+  widget.style.width = w + 'px';
+  widget.style.height = h + 'px';
+  widget.style.maxWidth = 'none';
+  widget.style.overflowY = 'auto';
+  widget.style.margin = '0';
+}
+
+function resetSize() {
+  ['position','left','top','width','height','maxWidth','overflowY','margin'].forEach(p => {
+    widget.style[p] = '';
+  });
+  try { localStorage.removeItem(SIZE_KEY); } catch {}
+}
+
+let isResizing = false;
+let startRect = null;
+let startX = 0;
+let startY = 0;
+
+function beginResize(clientX, clientY) {
+  const rect = widget.getBoundingClientRect();
+  startRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+  startX = clientX;
+  startY = clientY;
+  isResizing = true;
+
+  widget.style.position = 'fixed';
+  widget.style.left = startRect.left + 'px';
+  widget.style.top = startRect.top + 'px';
+  widget.style.width = startRect.width + 'px';
+  widget.style.height = startRect.height + 'px';
+  widget.style.maxWidth = 'none';
+  widget.style.overflowY = 'auto';
+  widget.style.margin = '0';
+
+  document.body.style.userSelect = 'none';
+  document.body.style.cursor = 'nwse-resize';
+}
+
+function updateResize(clientX, clientY) {
+  if (!isResizing) return;
+  const maxW = window.innerWidth - startRect.left - 12;
+  const maxH = window.innerHeight - startRect.top - 12;
+  const newW = Math.min(maxW, Math.max(360, startRect.width + (clientX - startX)));
+  const newH = Math.min(maxH, Math.max(260, startRect.height + (clientY - startY)));
+  widget.style.width = newW + 'px';
+  widget.style.height = newH + 'px';
+}
+
+function endResize() {
+  if (!isResizing) return;
+  isResizing = false;
+  document.body.style.userSelect = '';
+  document.body.style.cursor = '';
+  saveSize();
+}
+
+resizeHandle.addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  beginResize(e.clientX, e.clientY);
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  e.preventDefault();
+  updateResize(e.clientX, e.clientY);
+});
+
+document.addEventListener('mouseup', endResize);
+
+resizeHandle.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const t = e.touches[0];
+  beginResize(t.clientX, t.clientY);
+}, { passive: false });
+
+document.addEventListener('touchmove', (e) => {
+  if (!isResizing) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  updateResize(t.clientX, t.clientY);
+}, { passive: false });
+
+document.addEventListener('touchend', endResize);
+
+resizeHandle.addEventListener('dblclick', (e) => {
+  e.preventDefault();
+  resetSize();
+});
+
+window.addEventListener('resize', () => {
+  if (widget.style.position !== 'fixed') return;
+  const maxW = window.innerWidth - 24;
+  const maxH = window.innerHeight - 24;
+  const w = Math.min(parseFloat(widget.style.width) || 360, maxW);
+  const h = Math.min(parseFloat(widget.style.height) || 260, maxH);
+  const l = Math.max(12, Math.min(parseFloat(widget.style.left) || 12, window.innerWidth - w - 12));
+  const t = Math.max(12, Math.min(parseFloat(widget.style.top) || 12, window.innerHeight - h - 12));
+  widget.style.left = l + 'px';
+  widget.style.top = t + 'px';
+  widget.style.width = w + 'px';
+  widget.style.height = h + 'px';
+});
+
+/* =========================================================
+   REORDENAR MATÉRIAS (drag-and-drop)
+   ========================================================= */
+function reorderCycles(from, to) {
+  if (from === to) return;
+  if (from < 0 || to < 0) return;
+  if (from >= state.cycles.length || to >= state.cycles.length) return;
+
+  const length = state.cycles.length;
+  const indexMap = {};
+  for (let oldIdx = 0; oldIdx < length; oldIdx++) {
+    let newIdx;
+    if (oldIdx === from) {
+      newIdx = to;
+    } else if (from < to && oldIdx > from && oldIdx <= to) {
+      newIdx = oldIdx - 1;
+    } else if (from > to && oldIdx >= to && oldIdx < from) {
+      newIdx = oldIdx + 1;
+    } else {
+      newIdx = oldIdx;
+    }
+    indexMap[oldIdx] = newIdx;
+  }
+
+  /* Remapeia estado de "collapsed" para os novos índices */
+  const oldCollapsed = {};
+  Object.keys(collapsedLists).forEach(k => { oldCollapsed[k] = collapsedLists[k]; });
+  Object.keys(collapsedLists).forEach(k => delete collapsedLists[k]);
+  Object.keys(oldCollapsed).forEach(oldIdx => {
+    const newIdx = indexMap[Number(oldIdx)];
+    if (newIdx !== undefined) collapsedLists[newIdx] = oldCollapsed[oldIdx];
+  });
+
+  /* Reordena o array */
+  const [moved] = state.cycles.splice(from, 1);
+  state.cycles.splice(to, 0, moved);
+
+  /* Mantém a matéria ativa */
+  activeCycle = indexMap[activeCycle];
+
+  save();
+  render();
+}
+
+/* Handlers globais de touch (para drag em dispositivos móveis) */
+document.addEventListener('touchmove', (e) => {
+  if (!touchState) return;
+
+  const dx = Math.abs(e.touches[0].clientX - touchState.startX);
+  const dy = Math.abs(e.touches[0].clientY - touchState.startY);
+
+  if (!touchState.active) {
+    if (dx > 10 || dy > 10) {
+      if (touchState.timer) clearTimeout(touchState.timer);
+      touchState = null;
+    }
+    return;
+  }
+
+  e.preventDefault();
+
+  const targetEl = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+  const targetPill = targetEl ? targetEl.closest('[data-cycle]') : null;
+
+  selectorEl.querySelectorAll('.drag-over').forEach(p => p.classList.remove('drag-over'));
+
+  if (targetPill && targetPill !== touchState.pill) {
+    targetPill.classList.add('drag-over');
+    touchState.overIdx = Number(targetPill.dataset.cycle);
+  } else {
+    touchState.overIdx = touchState.srcIdx;
+  }
+}, { passive: false });
+
+document.addEventListener('touchend', () => {
+  if (!touchState) return;
+  if (touchState.timer) clearTimeout(touchState.timer);
+
+  if (touchState.active && touchState.overIdx !== touchState.srcIdx) {
+    suppressNextClick();
+    reorderCycles(touchState.srcIdx, touchState.overIdx);
+  }
+
+  selectorEl.querySelectorAll('.drag-over').forEach(p => p.classList.remove('drag-over'));
+  if (touchState.pill) touchState.pill.classList.remove('dragging');
+  touchState = null;
+});
+
+document.addEventListener('touchcancel', () => {
+  if (!touchState) return;
+  if (touchState.timer) clearTimeout(touchState.timer);
+  if (touchState.pill) touchState.pill.classList.remove('dragging');
+  selectorEl.querySelectorAll('.drag-over').forEach(p => p.classList.remove('drag-over'));
+  touchState = null;
+});
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render() {
+  if (activeCycle >= state.cycles.length) activeCycle = state.cycles.length - 1;
+  if (activeCycle < 0) activeCycle = 0;
+
+  renderSelector();
+  renderMaterias();
+  renderFooter();
+
+  cycleBadge.textContent = `Matéria ${activeCycle + 1} / ${state.cycles.length}`;
+
+  const canDelete = state.cycles.length > 1;
+  deleteCycleBtn.disabled = !canDelete;
+  deleteCycleBtn.title = canDelete
+    ? `Excluir "${state.cycles[activeCycle].name}"`
+    : 'Não é possível excluir a única matéria';
+}
+
+function renderSelector() {
+  const pills = state.cycles.map((c, i) => {
+    const cls = ['cycle-pill'];
+    if (i === activeCycle) cls.push('active');
+    return `<div class="${cls.join(' ')}" data-cycle="${i}" draggable="true" title="Arraste para reordenar · Clique para abrir">${escapeHtml(c.name)}</div>`;
+  }).join('');
+
+  selectorEl.innerHTML = pills +
+    `<div class="cycle-pill cycle-add" data-action="add-cycle" title="Adicionar matéria">+</div>`;
+
+  selectorEl.querySelectorAll('[data-cycle]').forEach(el => {
+    const cycleIdx = Number(el.dataset.cycle);
+
+    /* Clique → alterna matéria ativa */
+    el.addEventListener('click', () => {
+      if (suppressClickFlag) return;
+      activeCycle = cycleIdx;
+      render();
+    });
+
+    /* ===== HTML5 drag (mouse) ===== */
+    el.addEventListener('dragstart', (e) => {
+      dragSrcIdx = cycleIdx;
+      el.classList.add('dragging');
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', String(cycleIdx)); } catch {}
+      }
+    });
+
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      selectorEl.querySelectorAll('.drag-over').forEach(p => p.classList.remove('drag-over'));
+      suppressNextClick();
+      dragSrcIdx = null;
+    });
+
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    });
+
+    el.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      if (dragSrcIdx !== null && cycleIdx !== dragSrcIdx) {
+        selectorEl.querySelectorAll('.drag-over').forEach(p => p.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      }
+    });
+
+    el.addEventListener('dragleave', () => {
+      el.classList.remove('drag-over');
+    });
+
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (dragSrcIdx !== null && dragSrcIdx !== cycleIdx) {
+        reorderCycles(dragSrcIdx, cycleIdx);
+      }
+      dragSrcIdx = null;
+    });
+
+    /* ===== Touch drag (long-press 300ms) ===== */
+    el.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      touchState = {
+        pill: el,
+        srcIdx: cycleIdx,
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        active: false,
+        overIdx: cycleIdx,
+        timer: setTimeout(() => {
+          if (!touchState) return;
+          touchState.active = true;
+          el.classList.add('dragging');
+          if (navigator.vibrate) navigator.vibrate(30);
+        }, 300)
+      };
+    }, { passive: true });
+  });
+
+  const addCycleBtn = selectorEl.querySelector('[data-action="add-cycle"]');
+  if (addCycleBtn) addCycleBtn.addEventListener('click', addCycle);
+}
+
+function renderMaterias() {
+  const cycle = state.cycles[activeCycle];
+  const collapsedSet = ensureCollapsedSet();
+
+  if (!cycle.subjects.length) {
+    listEl.innerHTML = `<div class="empty-message">Nenhum tópico nesta matéria.<br>Clique em "+ Adicionar tópico" abaixo.</div>`;
+    return;
+  }
+
+  listEl.innerHTML = cycle.subjects.map((s, i) => {
+    const done = s.assuntos.filter(a => a.status === 'estudado').length;
+    const total = s.assuntos.length;
+    /* progresso ponderado pelos pesos dos status */
+    const weightSum = s.assuntos.reduce((acc, a) => acc + (STATUS_WEIGHTS[a.status] ?? 0), 0);
+    const pct = total > 0 ? Math.round((weightSum / total) * 100) : 0;
+    const isComplete = total > 0 && done === total;
+
+    const isCollapsed = collapsedSet.has(i);
+    const colorClass = `s${(i % 5) + 1}`;
+    const timeVal = (s.time === null || s.time === undefined) ? '' : s.time;
+
+    const assuntosHtml = total === 0
+      ? `<div class="assuntos-empty">Nenhum assunto cadastrado ainda.</div>`
+      : s.assuntos.map((a, ai) => {
+          const st = STATUSES.indexOf(a.status) !== -1 ? a.status : 'nao_iniciado';
+          return `
+          <div class="assunto-item status-${st}" data-materia="${i}" data-assunto="${ai}">
+            <select class="status-select status-${st}" data-action="status" aria-label="Status do assunto">
+              <option value="nao_iniciado"${st === 'nao_iniciado' ? ' selected' : ''}>Não iniciado</option>
+              <option value="em_andamento"${st === 'em_andamento' ? ' selected' : ''}>Teoria em andamento</option>
+              <option value="em_revisao"${st === 'em_revisao' ? ' selected' : ''}>Questões</option>
+              <option value="relembrar"${st === 'relembrar' ? ' selected' : ''}>Revisões</option>
+              <option value="estudado"${st === 'estudado' ? ' selected' : ''}>Concluído</option>
+            </select>
+            <input class="assunto-text" value="${escapeHtml(a.text)}" data-action="edit" placeholder="Digite o assunto">
+            <button class="icon-btn" data-action="delete" title="Excluir assunto">×</button>
+          </div>`;
+        }).join('');
+
+    return `
+      <div class="materia-card ${colorClass}" data-materia="${i}">
+        <div class="materia-header">
+          <div class="dot"></div>
+          <div class="materia-info">
+            <input class="materia-name-input" value="${escapeHtml(s.name)}" placeholder="Nome do tópico" data-action="name">
+            <div class="materia-time-row">
+              <input class="materia-time-input" type="number" min="0" value="${timeVal}" placeholder="—" data-action="time">
+              <span class="time-suffix">min</span>
+            </div>
+          </div>
+          <span class="assunto-count${isComplete ? ' is-complete' : ''}" title="${done} de ${total} concluídos · ${pct}%">${done}/${total} · ${pct}%</span>
+          <button class="icon-btn" data-action="delete-materia" title="Excluir tópico">🗑</button>
+        </div>
+
+        <button class="list-toggle-bar ${isCollapsed ? 'is-collapsed' : ''}" data-action="toggle-list" data-materia="${i}">
+          <span class="bar-left">
+            <span class="caret">▾</span>
+            <span>Assuntos (${total})</span>
+          </span>
+          <span class="bar-hint">${isCollapsed ? 'mostrar' : 'ocultar'}</span>
+        </button>
+
+        <div class="assuntos-wrap ${isCollapsed ? 'is-collapsed' : ''}" data-wrap="${i}">
+          <div class="assuntos-list">
+            ${assuntosHtml}
+          </div>
+        </div>
+
+        <div class="add-assunto-row">
+          <input class="new-assunto-input" placeholder="Novo assunto..." data-materia="${i}" data-action="new-assunto">
+          <button class="add-assunto-btn" data-materia="${i}" data-action="add-assunto">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  listEl.querySelectorAll('.assuntos-wrap').forEach(wrap => {
+    if (!wrap.classList.contains('is-collapsed')) {
+      wrap.style.maxHeight = wrap.scrollHeight + 'px';
+    }
+  });
+
+  bindMateriaEvents();
+}
+
+function bindMateriaEvents() {
+  listEl.querySelectorAll('.materia-card').forEach(card => {
+    const matIdx = Number(card.dataset.materia);
+
+    const nameInput = card.querySelector('[data-action="name"]');
+    nameInput.addEventListener('input', () => {
+      state.cycles[activeCycle].subjects[matIdx].name = nameInput.value;
+      save();
+    });
+
+    const timeInput = card.querySelector('[data-action="time"]');
+    timeInput.addEventListener('input', () => {
+      const v = timeInput.value.trim();
+      state.cycles[activeCycle].subjects[matIdx].time = v === '' ? null : Number(v);
+      save();
+    });
+
+    card.querySelector('[data-action="delete-materia"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nm = state.cycles[activeCycle].subjects[matIdx].name || 'sem nome';
+      openConfirm(
+        'Excluir tópico',
+        `Excluir o tópico "${nm}"?\nTodos os assuntos dele serão removidos.`,
+        'Excluir',
+        () => {
+          state.cycles[activeCycle].subjects.splice(matIdx, 1);
+          ensureCollapsedSet().clear();
+          save();
+          render();
+        }
+      );
+    });
+
+    const bar = card.querySelector('[data-action="toggle-list"]');
+    bar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const set = ensureCollapsedSet();
+      const willCollapse = !set.has(matIdx);
+      const wrap = card.querySelector('.assuntos-wrap');
+      const caretHint = bar.querySelector('.bar-hint');
+
+      if (willCollapse) {
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+          wrap.classList.add('is-collapsed');
+          wrap.style.maxHeight = '0px';
+        });
+        set.add(matIdx);
+        bar.classList.add('is-collapsed');
+        if (caretHint) caretHint.textContent = 'mostrar';
+      } else {
+        set.delete(matIdx);
+        bar.classList.remove('is-collapsed');
+        wrap.classList.remove('is-collapsed');
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        if (caretHint) caretHint.textContent = 'ocultar';
+        setTimeout(() => { wrap.style.maxHeight = 'none'; }, 350);
+      }
+    });
+  });
+
+  listEl.querySelectorAll('.assunto-item').forEach(item => {
+    const matIdx = Number(item.dataset.materia);
+    const asIdx  = Number(item.dataset.assunto);
+
+    const statusSel = item.querySelector('[data-action="status"]');
+    statusSel.addEventListener('change', () => {
+      const a = state.cycles[activeCycle].subjects[matIdx].assuntos[asIdx];
+      a.status = STATUSES.indexOf(statusSel.value) !== -1 ? statusSel.value : 'nao_iniciado';
+      save();
+      render();
+    });
+
+    const textInput = item.querySelector('[data-action="edit"]');
+    textInput.addEventListener('input', () => {
+      state.cycles[activeCycle].subjects[matIdx].assuntos[asIdx].text = textInput.value;
+      save();
+    });
+
+    item.querySelector('[data-action="delete"]').addEventListener('click', () => {
+      state.cycles[activeCycle].subjects[matIdx].assuntos.splice(asIdx, 1);
+      save();
+      render();
+    });
+  });
+
+  listEl.querySelectorAll('[data-action="add-assunto"]').forEach(btn => {
+    const matIdx = Number(btn.dataset.materia);
+    const input = listEl.querySelector(`[data-action="new-assunto"][data-materia="${matIdx}"]`);
+
+    const addFn = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      const subj = state.cycles[activeCycle].subjects[matIdx];
+      subj.assuntos.push({ text, status: 'nao_iniciado' });
+      ensureCollapsedSet().delete(matIdx);
+      input.value = '';
+      save();
+      render();
+      setTimeout(() => {
+        const newInput = listEl.querySelector(`[data-action="new-assunto"][data-materia="${matIdx}"]`);
+        if (newInput) newInput.focus();
+      }, 0);
+    };
+
+    btn.addEventListener('click', addFn);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') addFn(); });
+  });
+}
+
+function renderFooter() {
+  const counts = {};
+  STATUSES.forEach(s => counts[s] = 0);
+  let total = 0;
+  let totalWeight = 0;
+  state.cycles.forEach(c => c.subjects.forEach(s => {
+    s.assuntos.forEach(a => {
+      total++;
+      const st = STATUSES.indexOf(a.status) !== -1 ? a.status : 'nao_iniciado';
+      counts[st]++;
+      totalWeight += STATUS_WEIGHTS[st] ?? 0;
+    });
+  }));
+
+  const pct = total === 0 ? 0 : Math.round((totalWeight / total) * 100);
+  progress.style.width = pct + '%';
+
+  if (total === 0) {
+    footerInfo.textContent = 'Adicione assuntos para começar a acompanhar';
+    return;
+  }
+  let txt = `Progresso geral: ${pct}% · ${counts.estudado}/${total} concluídos`;
+  if (counts.em_andamento > 0) txt += ` · ${counts.em_andamento} em teoria`;
+  if (counts.em_revisao  > 0) txt += ` · ${counts.em_revisao} questões`;
+  if (counts.relembrar   > 0) txt += ` · ${counts.relembrar} revisões`;
+  footerInfo.textContent = txt;
+}
+
+function addCycle() {
+  let n = 1;
+  const names = new Set(state.cycles.map(c => c.name));
+  while (names.has(`Matéria ${n}`)) n++;
+  state.cycles.push({ name: `Matéria ${n}`, subjects: [] });
+  activeCycle = state.cycles.length - 1;
+  clearCollapsed();
+  save();
+  render();
+}
+
+deleteCycleBtn.addEventListener('click', () => {
+  if (state.cycles.length <= 1) return;
+
+  const c = state.cycles[activeCycle];
+  const totalAssuntos = c.subjects.reduce((n, s) => n + s.assuntos.length, 0);
+
+  let msg = `Deseja excluir a matéria "${c.name}"?`;
+  if (c.subjects.length || totalAssuntos) {
+    msg += '\n\nIsso removerá';
+    if (c.subjects.length) msg += ` ${c.subjects.length} tópico(s)`;
+    if (c.subjects.length && totalAssuntos) msg += ' e';
+    if (totalAssuntos) msg += ` ${totalAssuntos} assunto(s)`;
+    msg += '.';
+  }
+
+  openConfirm('Excluir matéria', msg, 'Excluir', () => {
+    state.cycles.splice(activeCycle, 1);
+    if (activeCycle >= state.cycles.length) activeCycle = state.cycles.length - 1;
+    clearCollapsed();
+    save();
+    render();
+  });
+});
+
+addMateriaBtn.addEventListener('click', () => {
+  state.cycles[activeCycle].subjects.push({ name: 'Novo tópico', time: null, assuntos: [] });
+  save();
+  render();
+});
+
+exportBtn.addEventListener('click', () => {
+  const exportData = {
+    cycles: state.cycles.map(c => ({
+      name: c.name,
+      subjects: c.subjects.map(s => ({ name: s.name, time: s.time }))
+    }))
+  };
+  const json = JSON.stringify(exportData, null, 2);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(json)
+      .then(() => alert('✅ Configuração copiada!\n\nCole no CONFIG do widget de estudos.'))
+      .catch(() => prompt('Copie o JSON abaixo:', json));
+  } else {
+    prompt('Copie o JSON abaixo:', json);
+  }
+});
+
+resetBtn.addEventListener('click', () => {
+  openConfirm(
+    'Restaurar padrão',
+    'Restaurar matérias, tópicos, assuntos e tamanho do widget ao padrão?\nTodo o progresso será perdido.',
+    'Restaurar',
+    () => {
+      state = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      activeCycle = 0;
+      clearCollapsed();
+      save();
+      resetSize();
+      render();
+    }
+  );
+});
+
+/* ============ INICIALIZAÇÃO ============ */
+/*
+   IMPORTANTE: se você já tinha aberto uma versão anterior deste widget,
+   o localStorage guarda a configuração ANTIGA. Para carregar o novo edital:
+   → clique em "↺ Restaurar padrão" no widget
+   → OU limpe o localStorage (Ctrl+Shift+Del → "Cookies e dados de sites")
+   → OU abra numa aba anônima/privada
+*/
+state = load() || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+const savedSize = loadSize();
+if (savedSize) applySize(savedSize);
+render();
+</script>
+</body>
+</html>
